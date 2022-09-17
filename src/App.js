@@ -1,23 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import "./App.css";
+import Header from "./components/cars-home";
+import Car from "./components/car-details";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import ErrorPage from "./components/error/ErrorPage";
 
 function App() {
+  const [state, setState] = useState([]);
+  useEffect(() => {
+    fetch("http://localhost:8080/cars")
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        setState(data);
+        return data;
+      });
+  }, []);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Header data={state} />}></Route>
+          <Route path="/car/:id" element={<Car />}></Route>
+          <Route path="*" element={<ErrorPage />} />
+        </Routes>
+      </Router>
     </div>
   );
 }
